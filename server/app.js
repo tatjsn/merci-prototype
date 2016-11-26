@@ -14,9 +14,6 @@ class App {
         return new App(router);
       });
   }
-  static makeRouter() {
-    return express.Router(); // eslint-disable-line new-cap
-  }
   listen(...args) {
     this.server.listen(...args);
   }
