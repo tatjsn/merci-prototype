@@ -2,7 +2,7 @@ export default func => {
   let singleton;
   return (...args) => {
     if (singleton) {
-      return Promise.result(singleton);
+      return Promise.resolve(singleton);
     }
     return func(...args)
       .then(result => {
