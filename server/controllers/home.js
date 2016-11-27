@@ -1,6 +1,6 @@
 const home = (req, res) => {
   const [categories, products] = req.home;
-  const root = categories.find(cat => cat.name === 'Root');
+  const root = categories.find(cat => cat.code === 'root');
   const tabs = categories.filter(cat => cat.parent === root.id);
   res.write('<body>');
   res.write(`<div>${tabs.map(cat => cat.name).join(' | ')}</div>`);
