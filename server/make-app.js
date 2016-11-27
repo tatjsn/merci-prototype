@@ -1,12 +1,17 @@
 import express from 'express';
 
-export default (getCategories, getProducts, initRouter) =>
-  Promise
-    .all([getCategories(), getProducts()])
-    .then(([categories, products]) => {
-      const router = express.Router(); // eslint-disable-line new-cap
-      initRouter(router, categories, products);
-      const app = express();
-      app.use(router);
-      return app;
+export default (container, ...controllers) => {
+  const app = express();
+  controllers.forEach(controller => {
+    const { name, method, path, dependencies } = controller.manifest;
+    const promises = dependencies.map(dep => container[dep]());
+    app[method](path, (req, res, next) => {
+      Promise.all(promises).then(results => {
+        req[name] = results; // eslint-disable-line no-param-reassign
+        next();
+      });
     });
+    app[method](path, controller);
+  });
+  return app;
+};
