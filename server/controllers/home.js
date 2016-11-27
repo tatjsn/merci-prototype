@@ -2,14 +2,27 @@ const home = (req, res) => {
   const [categories, products] = req.home;
   const root = categories.find(cat => cat.name === 'Root');
   const tabs = categories.filter(cat => cat.parent === root.id);
-  res.write(`${tabs.map(cat => cat.name).join(' | ')}\n`);
+  res.write('<body>');
+  res.write(`<div>${tabs.map(cat => cat.name).join(' | ')}</div>`);
+  res.write('<ul>');
   tabs.forEach(tab => {
-    res.write(`\n${tab.name}\n`);
-    const subCats = categories.filter(cat => cat.parent === tab.id);
-    res.write(`${subCats.map(cat => cat.name).join(' | ')}\n`);
+    res.write(`<li>${tab.name}`);
+    res.write('<ul>');
+    const subCats = categories
+      .filter(cat => cat.parent === tab.id);
+    subCats.forEach(cat => {
+      res.write(`<li>${cat.name}(count=${products.filter(prod => prod.category === cat.id).length})`);
+    });
+    res.write('</ul>');
   });
-  res.write(`Total products: ${products.length}\n`);
-  res.end('\nEOP\n');
+  res.write('</ul>');
+  res.write('<h3>All Products</h3>');
+  res.write('<ul>');
+  products.forEach(prod => {
+    res.write(`<li><a href=./products/${prod.code}>${prod.name}</a>`);
+  });
+  res.write('</ul>');
+  res.end('</body>');
 };
 
 home.manifest = {
